@@ -14,3 +14,4 @@
 room(PlaceID) :- zone(_,PlaceID,_,_,Neighbours), length(Neighbours,1).
 
 % Exercise 2.2: insert a definition of the predicate "nextColorInSeq(Color)".
+nextColorInSeq(Color)	:-	sequenceIndex(Index),sequence(List),nth0(Index,List,Color).
