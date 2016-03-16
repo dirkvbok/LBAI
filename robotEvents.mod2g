@@ -2,38 +2,41 @@ use robot as knowledge.
 
 module robotEvents {
 	% Update the agent's state of movement.
-	forall bel( state(State)), percept(state(NewState))  
+	forall bel( state(State)), percept(state(NewState))
 		do delete( state(State) ) + insert( state(NewState) ).
-	
+
 	% Record when we are entering or leaving a room.
 	forall percept(in(Place)) do insert( in(Place) ).
-	forall percept(not(in(Place))) do delete( in(Place) ).
+	forall percept(not(in(Place))) do delete( in(Place) )+ insert(visited(Place)).
 
-	
+
 	% Exercise 2.1b: insert rules for handling percepts other than "sendonce" percepts.
-	
+
 	% Update the agent's place.
 	forall bel(at(Place)), percept(at(NewPlace))
 		do delete(at(Place)) + insert(at(NewPlace)).
-	
+
 	% If in reach of block, agent beliefs atBlock. When not in reach, belief is deleted.
 	forall percept(atBlock(Block)) do insert(atBlock(Block)).
 	forall percept(not(atBlock(Block))) do delete(atBlock(Block)).
-	
+
 	% For all blocks that are in reach, add the color of these blocks to the belief base.
-	forall bel(atBlock(Block)), percept(color(Block,Color)) 
+	forall bel(atBlock(Block)), percept(color(Block,Color))
 		do insert(color(Block,Color)).
-	
+
 	% If holding a block, agent adds holding(Block) to belief base.
 	forall percept(holding(Block)) do insert(holding(Block)).
 	forall percept(not(holding(Block))) do delete(holding(Block)).
-	
+
 	% States the index of the currently needed color in the sequence.
 	if bel(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)).
-	
+
+	% If the agents has the belief that the agent is in a room then it percepts the blocks in that room and
+	% inserts it into the belief base
+	forall bel(in(Place)), percept (block(Block,Place)) do insert(block(Block,Place)).
 
 	% Exercise 2.5b: insert code for goal management that allows an agent to systematically search for blocks. (if needed)
-	
-	% Exercise 2.6b: insert code for goal management that makes the agent deliver a block when it 
+
+	% Exercise 2.6b: insert code for goal management that makes the agent deliver a block when it
 	%   knows about a block that can be delivered. (if needed)
 }
