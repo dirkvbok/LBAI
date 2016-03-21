@@ -28,26 +28,30 @@ module robotEvents {
 	forall percept(holding(Block)) do insert(holding(Block)).
 	forall percept(not(holding(Block))) do delete(holding(Block)).
 
-	if bel(not(sequenceIndex(Integer))), percept(not(sequenceIndex(Integer))) then exit-module.
+
+
+
 	% States the index of the currently needed color in the sequence.
 	if bel(not(sequenceIndex(OldInteger))), percept(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)).
-	
-	% Updates 
+
+	% Updates
 	if bel(sequenceIndex(Integer)), percept(sequenceIndex(NewInteger))
 		then delete(sequenceIndex(Integer)) + insert(sequenceIndex(NewInteger)).
 
+	% Drops all unvisited in(Room) goals if the sequenceIndex hits 6 ie: no more colors left
+	forall goal(in(Room)), bel(not(visited(Room))), bel(sequenceIndex(6))  do drop (in(Room)).
+
 	% Adopt the goal for current color in the sequence.
 	if bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
-	
 
-	
+
+
 	%if goal(currentColor(OldColor)), bel(nextColorInSeq(Color)) then drop(currentColor(OldColor)) + adopt(currentColor(Color)).
-
 
 	% Removes the block that the agent is holding from the belief base
 	if bel(holding(Block)), bel(block(Block,Room)) then delete(block(Block,Room)).
 
-	
+
 
 
 	% Exercise 2.5b: insert code for goal management that allows an agent to systematically search for blocks. (if needed)
@@ -56,7 +60,7 @@ module robotEvents {
 	% Exercise 2.6b: insert code for goal management that makes the agent deliver a block when it
 	%   knows about a block that can be delivered. (if needed)
 
-	
+
 
 
 
