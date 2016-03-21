@@ -19,7 +19,7 @@ module robotInit {
 	forall percept (place(Place)) do insert(place(Place)).
 
 	%If there is a percept of a sequence of colors then adopt it as a goal
-	if percept(sequence(Color)) then adopt(sequence(Color)).
+	if percept(sequence(Color)) then insert(sequence(Color)).
 
 
 

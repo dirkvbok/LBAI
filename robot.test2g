@@ -15,7 +15,7 @@ test main with
 
 
 		bel(not(in(Room))) leadsto not(done(putDown)).
-		bel(holding(Block), color(Block,Color), nextColorInSeq(_,_,Color)) leadsto not(done(putDown)).
+		%bel(holding(Block), color(Block,Color), nextColorInSeq(_,_,Color)) leadsto not(done(putDown)).
 		
 			
 		% Assignment 3.2: insert any additional conditions for further requirements.
