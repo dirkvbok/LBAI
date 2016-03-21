@@ -15,13 +15,13 @@ define goToBlock(Block) with
 % Exercise 2.3b: insert a specification for the pickUp action.
 % The agent has to be near a block and must not hold a block in order to pick up the block
 % Then the block is removed from the place and the agent is holding the block
-define pickUp with
-	pre {atBlock(Block), block(Block,Room), color(Block,Color), nextColorInSeq(Color)}
-	post{holding(Block), not(block(Block,Room)), not(atBlock(Block)) }
+define pickUp(Block) with
+	pre {not(holding(Block))}
+	post{holding(Block)}
 
 % Exercise 2.3c: insert a specification for the putDown action.
 % The agent has to be holding at least one block and has to be in a room in order to drop
 % the block, then the agent is no longer holding the block
 define putDown with
 	pre	{holding(Block), not(currentColor(Color))}
-	post {not(holding(Block)), currentColor(Color)}
+	post {not(holding(Block)), currentColor(Color),nextColorInSeq(Color)}

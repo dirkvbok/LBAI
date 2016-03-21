@@ -1,7 +1,7 @@
 use robot as knowledge.
 
 module robotEvents {
-	
+
 	% Update the agent's state of movement.
 	forall bel( state(State)), percept(state(NewState))
 		do delete( state(State) ) + insert( state(NewState) ).
@@ -15,7 +15,7 @@ module robotEvents {
 
 	% Update the agent's place.
 	if percept(at(Place)) then insert(at(Place)).
-	
+
 	% If in reach of block, agent beliefs atBlock. When not in reach, belief is deleted.
 	forall percept(atBlock(Block)) do insert(atBlock(Block)).
 	forall percept(not(atBlock(Block))) do delete(atBlock(Block)).
@@ -33,31 +33,28 @@ module robotEvents {
 
 	% Adopt the goal for current color in the sequence.
 	if bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
-	
-	
 
+
+	% Removes the block that the agent is holding from the belief base
 	if bel(holding(Block)), bel(block(Block,Room)), bel(color(Block,Color)) then delete(block(Block,Room), color(Block,Color)).
 
 
 
 
 	% Exercise 2.5b: insert code for goal management that allows an agent to systematically search for blocks. (if needed)
-	
-	
+
+
 	% Exercise 2.6b: insert code for goal management that makes the agent deliver a block when it
 	%   knows about a block that can be delivered. (if needed)
-	
-	
-	if bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
-	if bel(atBlock(Block)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(have(Block)).
-	if bel(holding(Block)) then adopt(in('DropZone')).
-	if bel(holding(Block)), bel(in('DropZone')) then adopt(deliver(Block)).
-	
-	
-	
-	
 
 
-	
-	
+	if bel(not(atBlock(Block))), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
+	if bel(atBlock(Block)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(holding(Block)).
+
+
+
+
+
+
+
 }
