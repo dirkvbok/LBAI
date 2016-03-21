@@ -7,10 +7,20 @@ test main with
 	pre { true }
 	in {				
 		% Assignment 3.1: insert test conditions for the mandatory requirements.
+		%	(2 points) An agent should not drop a block outside a room (i.e. in a corridor);
+		%	2. (2 points) An agent should not pick up a block that is not of the next needed color;
+		%	3. (2 points) An agent that is holding a block that is not of the next needed color should not enter
+		%	the drop zone;
+		%	4. (2 points) An agent should not leave the drop zone whilst holding a block.
+
+
+		bel(not(in(Room))) leadsto not(done(putDown)).
+		bel(holding(Block), color(Block,Color), nextColorInSeq(_,_,Color)) leadsto not(done(putDown)).
+		
 			
 		% Assignment 3.2: insert any additional conditions for further requirements.
 		 
-	}
+	} 
 	post { true }
 	
 robot {

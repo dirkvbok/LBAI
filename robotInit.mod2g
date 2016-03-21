@@ -10,15 +10,16 @@ module robotInit {
 
 	% Adopt initial goals.
 	forall bel( room(Place) ) do adopt( in(Place) ).
+	
 
-	% Exercise 2.1a: insert rules for processing percepts that are sent only at the beginning of a session,
-	%  and/or need to be initialized.
+		% Exercise 2.1a: insert rules for processing percepts that are sent only at the beginning of a session,
+		%  and/or need to be initialized.
 
 	%Record initially which places there are in the environment
 	forall percept (place(Place)) do insert(place(Place)).
 
-	%If there is a belief of a sequence of colors then adopt it as a goal
-	if bel(sequence([Color])) then adopt(sequence([Color])).
+	%If there is a percept of a sequence of colors then adopt it as a goal
+	if percept(sequence(Color)) then adopt(sequence(Color)).
 
 
 

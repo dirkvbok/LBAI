@@ -17,11 +17,11 @@ define goToBlock(Block) with
 % Then the block is removed from the place and the agent is holding the block
 define pickUp with
 	pre {atBlock(Block)}
-	post{holding(Block), not(atBlock(Block)) }
+	post{holding(Block) }
 
 % Exercise 2.3c: insert a specification for the putDown action.
 % The agent has to be holding at least one block and has to be in a room in order to drop
 % the block, then the agent is no longer holding the block
 define putDown with
 	pre	{holding(Block),in(Room)}
-	post	{not(holding(Block)), block(Block,Room)}
+	post {not(holding(Block)), block(Block,Room)}
