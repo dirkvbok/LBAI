@@ -6,15 +6,29 @@ module main {
 
 
 	% Exercise 2.5a: insert code for action rules that allows an agent to systematically search for blocks.
-	if goal-a(in(Place)) then insert(visited(Place)).
+
 
 	% Exercise 2.6a: insert code for action rules that makes the agent deliver a block when it
 	%   knows about a block that can be delivered.
 
 
-	if a-goal( atBlock(Block) ) then goToBlock(Block).
-	if a-goal( holding(Block) ) then pickUp(Block).
-	if bel(in('DropZone')) then putDown.
-	if bel(holding(Block)) then goTo('DropZone').
-	if a-goal( in(Place) ) then goTo(Place).
+
+	
+	if a-goal(currentColor(Color)), bel(not(holding(Block))), bel(in('DropZone')), bel(block(Block,Room)), bel(color(Block,Color)), bel(visited(Room)) then goTo(Room).
+	
+
+	
+	if a-goal(currentColor(Color)), bel(not(holding(_))), bel(atBlock(Block)), bel(in(Room)), bel(color(Block,Color)) then pickUp(Block).
+	if a-goal(currentColor(Color)), bel(not(holding(_))), bel(block(Block,Room)), bel(in(Room)), bel(not(atBlock(Block))), bel(color(Block,Color)) then goToBlock(Block).
+	
+	
+	if a-goal(currentColor(Color)), bel(in('DropZone')), bel(holding(Block)) then putDown + drop(currentColor(Color)).
+	if a-goal(currentColor(Color)), bel(not(in('DropZone'))), bel(holding(Block)), bel(in(Room)) then goTo('DropZone').
+	
+
+		
+	if a-goal(currentColor(Color)), bel(room(Room),not(visited(Room)), not(in(Room))) then goTo(Room).
+	
+		
+	
 }

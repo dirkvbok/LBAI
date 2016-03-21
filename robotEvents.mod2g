@@ -7,8 +7,8 @@ module robotEvents {
 		do delete( state(State) ) + insert( state(NewState) ).
 
 	% Record when we are entering or leaving a room.
-	forall percept(in(Room)) do insert( in(Room) ).
-	forall percept(not(in(Room))) do delete( in(Room)) .
+	forall percept(in(Room)) do insert( in(Room) ) + drop(inVisited(Room)).
+	forall percept(not(in(Room))) do delete( in(Room)) + insert(visited(Room)).
 
 
 		% Exercise 2.1b: insert rules for handling percepts other than "sendonce" percepts.
@@ -28,17 +28,26 @@ module robotEvents {
 	forall percept(holding(Block)) do insert(holding(Block)).
 	forall percept(not(holding(Block))) do delete(holding(Block)).
 
+	if bel(not(sequenceIndex(Integer))), percept(not(sequenceIndex(Integer))) then exit-module.
 	% States the index of the currently needed color in the sequence.
-	if percept(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)).
+	if bel(not(sequenceIndex(OldInteger))), percept(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)).
+	
+	% Updates 
+	if bel(sequenceIndex(Integer)), percept(sequenceIndex(NewInteger))
+		then delete(sequenceIndex(Integer)) + insert(sequenceIndex(NewInteger)).
 
 	% Adopt the goal for current color in the sequence.
 	if bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
+	
+
+	
+	%if goal(currentColor(OldColor)), bel(nextColorInSeq(Color)) then drop(currentColor(OldColor)) + adopt(currentColor(Color)).
 
 
 	% Removes the block that the agent is holding from the belief base
-	if bel(holding(Block)), bel(block(Block,Room)), bel(color(Block,Color)) then delete(block(Block,Room), color(Block,Color)).
+	if bel(holding(Block)), bel(block(Block,Room)) then delete(block(Block,Room)).
 
-
+	
 
 
 	% Exercise 2.5b: insert code for goal management that allows an agent to systematically search for blocks. (if needed)
@@ -47,12 +56,7 @@ module robotEvents {
 	% Exercise 2.6b: insert code for goal management that makes the agent deliver a block when it
 	%   knows about a block that can be delivered. (if needed)
 
-
-	if bel(not(atBlock(Block))), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
-	if bel(atBlock(Block)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(holding(Block)).
-
-
-
+	
 
 
 

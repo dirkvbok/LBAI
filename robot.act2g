@@ -9,7 +9,7 @@ define goTo(Location) with
 % Exercise 2.3a: insert a specification for the goToBlock(Block) action.
 % The agent has to be near a block to go to the block and when it has reached the block it will be in "arrived" mode
 define goToBlock(Block) with
-	pre	{not(atBlock(Block))}
+	pre	{not(atBlock(Block)), in(Room)}
 	post { true }
 
 % Exercise 2.3b: insert a specification for the pickUp action.
@@ -23,5 +23,5 @@ define pickUp(Block) with
 % The agent has to be holding at least one block and has to be in a room in order to drop
 % the block, then the agent is no longer holding the block
 define putDown with
-	pre	{holding(Block), not(currentColor(Color))}
-	post {not(holding(Block)), currentColor(Color),nextColorInSeq(Color)}
+	pre	{holding(Block)}
+	post {not(holding(Block))}
