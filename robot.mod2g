@@ -5,28 +5,22 @@ exit=nogoals.
 module main {
 
 
-	% Exercise 2.5a: insert code for action rules that allows an agent to systematically search for blocks.
-
-
-	% Exercise 2.6a: insert code for action rules that makes the agent deliver a block when it
-	%   knows about a block that can be delivered.
-
-
-
-	
+	% When agent is in DropZone and remembers a block with current needed color somewhere in a room, it will go to that room.
 	if a-goal(currentColor(Color)), bel(not(holding(Block))), bel(in('DropZone')), bel(block(Block,Room)), bel(color(Block,Color)), bel(visited(Room)) then goTo(Room).
-	
 
-	
+	% When agent holds nothing and is near a block with the right color, it will pick the block up.
 	if a-goal(currentColor(Color)), bel(not(holding(_))), bel(atBlock(Block)), bel(in(Room)), bel(color(Block,Color)) then pickUp(Block).
+	
+	% When agent sees a block in a room with the right color but is not near it, it will go to the block.
 	if a-goal(currentColor(Color)), bel(not(holding(_))), bel(block(Block,Room)), bel(in(Room)), bel(not(atBlock(Block))), bel(color(Block,Color)) then goToBlock(Block).
 	
-	
+	% When agent is in DropZone while holding the right block, it will put the block down and drop the goal of bringing that block to the DropZone.
 	if a-goal(currentColor(Color)), bel(in('DropZone')), bel(holding(Block)) then putDown + drop(currentColor(Color)).
+	
+	% When agent holds the right block but isn't in DropZone, it will go to DropZone.
 	if a-goal(currentColor(Color)), bel(not(in('DropZone'))), bel(holding(Block)), bel(in(Room)) then goTo('DropZone').
 	
-
-		
+	% While having the main goal, and not having visited a room; have the goal of visiting that room. (go to every room)
 	if a-goal(currentColor(Color)), bel(room(Room),not(visited(Room)), not(in(Room))) then goTo(Room).
 	
 		
