@@ -5,9 +5,9 @@ timeout = 300.
 
 test main with
 	pre { true }
-	in {				
+	in {
 		% Assignment 3.1: insert test conditions for the mandatory requirements.
-	
+
 		% An agent should not drop a block outside a room (i.e. in a corridor);
 		never bel(not(in(Room))), done(putDown).
 		% An agent should not pick up a block that is not of the next needed color;
@@ -16,13 +16,18 @@ test main with
 		never bel(holding(Block)), bel(nextColorInSeq(Color)), bel(not(color(Block,Color))), done(goTo('DropZone')).
 		% An agent should not leave the drop zone whilst holding a block.
 		never bel(in('DropZone')), bel(holding(Block)), done(goTo(Room)).
-			
-			
+
+		goal(currentColor(Color)) leadsto goTo(Room).
+		goal(currentColor(Color)) leadsto pickUp(Block).
+		goal(currentColor(Color)) leadsto goTo('DropZone').
+		goal(currentColor(Color)) leadsto putDown(Block).
+		goal(currentColor(Color)) leadsto goal(not(currentColor(Color))).
+
 		% Assignment 3.2: insert any additional conditions for further requirements.
-		 
-	} 
+
+	}
 	post { true }
-	
+
 robot {
-	do main. 
+	do main.
 }
