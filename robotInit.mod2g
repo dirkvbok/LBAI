@@ -21,7 +21,8 @@ module robotInit {
 	%If there is a percept of a sequence of colors then adopt it as a goal
 	if percept(sequence(Color)) then insert(sequence(Color)).
 
-
+	% States the index of the currently needed color in the sequence.
+	if percept(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)).
 
 
 

@@ -28,22 +28,26 @@ module robotEvents {
 	forall percept(holding(Block)) do insert(holding(Block)).
 	forall percept(not(holding(Block))) do delete(holding(Block)).
 
-	% States the index of the currently needed color in the sequence.
-	if bel(not(sequenceIndex(OldInteger))), percept(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)).
-
 	% Updates sequenceindex
 	if bel(sequenceIndex(Integer)), percept(sequenceIndex(NewInteger))
 		then delete(sequenceIndex(Integer)) + insert(sequenceIndex(NewInteger)).
 
 	% Drops all unvisited in(Room) goals if the sequenceIndex hits 6 ie: no more colors left
-	forall goal(in(Room)), bel(not(visited(Room))), bel(sequenceIndex(6))  do drop (in(Room)).
+	forall goal(in(Room)), bel(sequenceIndex(6))  do drop (in(Room)) + print('Agent terminated.').
 
+	if goal(currentColor(OldColor)), bel(nextColorInSeq(Color)) then drop(currentColor(OldColor)).
+	
 	% Adopt the goal for current color in the sequence.
-	if bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
+	if goal(not(currentColor(_))), bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
+	
+	
 
 	% Removes the belief of block in a room that the agent is holding
-	if bel(holding(Block)), bel(block(Block,Room)) then delete(block(Block,Room)).
+	if bel(holding(Block)), bel(block(Block,Room)) then delete(block(Block,Room)) + insert(takenFrom(Block,Room)).
 
+	
+	if bel(holding(Block)), bel(color(Block,Color)), goal(currentColor(NewColor), not(NewColor = Color)) then adopt(returnBlock(Block)).
+	
 
 
 

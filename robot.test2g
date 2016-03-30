@@ -17,6 +17,7 @@ test main with
 		% An agent should not leave the drop zone whilst holding a block.
 		never bel(in('DropZone')), bel(holding(Block)), done(goTo(Room)).
 
+		% tests for mod file
 		goal(currentColor(Color)) leadsto goTo(Room).
 		goal(currentColor(Color)) leadsto pickUp(Block).
 		goal(currentColor(Color)) leadsto goTo('DropZone').
