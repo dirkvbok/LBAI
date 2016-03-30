@@ -13,8 +13,8 @@
 	currentColor/1,
 	inVisited/1,
 	returnBlock/1,
-	takenFrom/2.
-	
+	takenFrom/2,
+	deliverBlock/1.
 
 % A room is a place with exactly one neighbour, i.e., there is only one way to get to and from that place.
 room(PlaceID)	 			:- zone(_,PlaceID,_,_,Neighbours), length(Neighbours,1).

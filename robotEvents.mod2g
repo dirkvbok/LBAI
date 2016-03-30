@@ -35,23 +35,26 @@ module robotEvents {
 	% Drops all unvisited in(Room) goals if the sequenceIndex hits 6 ie: no more colors left
 	forall goal(in(Room)), bel(sequenceIndex(6))  do drop (in(Room)) + print('Agent terminated.').
 
+	% Delete goal current color if this is no longer the current color in sequence.
 	if goal(currentColor(OldColor)), bel(nextColorInSeq(Color)) then drop(currentColor(OldColor)).
 	
-	% Adopt the goal for current color in the sequence.
+	% Adopt the belief for current color in the sequence.
 	if goal(not(currentColor(_))), bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
 	
+	% If in a room with needed block, adopt goal of being at this block.
+	if bel(in(Room)), bel(block(Block,Room)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
 	
+	% If at the right block, adopt goal of having it delivered.
+	if goal(currentColor(Color)), bel(atBlock(Block)), bel(color(Block,Color)) then adopt(deliverBlock(Block)).
 
 	% Removes the belief of block in a room that the agent is holding
 	if bel(holding(Block)), bel(block(Block,Room)) then delete(block(Block,Room)) + insert(takenFrom(Block,Room)).
 
-	
+	% If agent wants to get block in room but percepts block is not in room anymore, adopt goal of returning block.
 	if bel(holding(Block)), bel(color(Block,Color)), goal(currentColor(NewColor), not(NewColor = Color)) then adopt(returnBlock(Block)).
 	
-
-
-
-
+	% Removes atBlock in case of duplicate color.
+	forall goal(atBlock(Block)), bel(in('DropZone')) do drop(atBlock(Block)).
 
 
 
