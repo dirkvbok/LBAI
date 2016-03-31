@@ -7,7 +7,7 @@ module robotEvents {
 		do delete( state(State) ) + insert( state(NewState) ).
 
 	% Record when we are entering or leaving a room.
-	forall percept(in(Room)) do insert( in(Room) ) + drop(inVisited(Room)).
+	forall percept(in(Room)) do insert( in(Room) ).
 	forall percept(not(in(Room))) do delete( in(Room)) + insert(visited(Room)).
 
 
@@ -22,7 +22,11 @@ module robotEvents {
 
 	% For all blocks that are in a room where the agent is, add the color and room of these blocks to the belief base.
 	forall percept(color(Block,Color)), bel(in(Room))
-		do insert(color(Block,Color)) + insert(block(Block,Room)).
+		do insert(color(Block,Color)) + insert(block(Block,Room)).	
+	
+	forall (Bot).sent:(color(Block,Color)) do insert(color(Block,Color))+print('This is a Color').
+	forall (Bot).sent:(block(Block,Room)) do insert(block(Block,Room)) + insert(visited(Room)) +drop(in(Room))+print('This is a Block').
+	forall (Bot).sent:(pickedUp(Block)), bel(block(Block,Room)) do delete(block(Block,Room)).
 
 	% If holding a block, agent adds holding(Block) to belief base.
 	forall percept(holding(Block)) do insert(holding(Block)).
@@ -34,13 +38,17 @@ module robotEvents {
 
 	% Drops all unvisited in(Room) goals if the sequenceIndex hits 6 ie: no more colors left
 	forall goal(in(Room)), bel(sequenceIndex(6))  do drop (in(Room)) + print('Agent terminated.').
-
+	forall goal(currentColor(Color)), bel(sequenceIndex(6))  do drop (currentColor(Color)) + print('Agent terminated.').
+	if bel(sequenceIndex(6)) then drop(running).
 
 	% Delete goal current color if this is no longer the current color in sequence.
-	if goal(currentColor(OldColor)), bel(nextColorInSeq(Color)) then drop(currentColor(OldColor)).
+	if goal(currentColor(OldColor)), bel(nextColorInSeq(Color), Color \= OldColor) then drop(currentColor(OldColor)).
 	
 	% Adopt the belief for current color in the sequence.
 	if goal(not(currentColor(_))), bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
+	
+	if goal(currentColor(Color)), bel(holding(Block)), bel(color(Block,OtherColor), OtherColor \= Color) 
+		then adopt(returnBlock(Block)) + drop(deliverBlock(Block)).
 	
 	% If in a room with needed block, adopt goal of being at this block.
 	if bel(in(Room)), bel(block(Block,Room)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
@@ -57,8 +65,9 @@ module robotEvents {
 	% Removes all atBlock goals in case there are duplicate colors.
 	forall goal(atBlock(Block)), bel(in('DropZone')) do drop(atBlock(Block)).
 
-
-
-
-
+	if goal(atBlock(Block)), bel(color(Block,Color)), bel(in(Room)), bel(block(Block,Room)), not(percept(color(Block,Color))) then drop(atBlock(Block)).
+	
+	
+	
+	
 }

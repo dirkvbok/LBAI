@@ -16,7 +16,7 @@ define goToBlock(Block) with
 % Agent first doesn't hold the block and after the action it will hold it.
 define pickUp(Block) with
 	pre {not(holding(Block)), in(Room)}
-	post{holding(Block),not(block(Block,Room))}
+	post{holding(Block),not(block(Block,Room)), takenFrom(Block,Room)}
 
 % Exercise 2.3c: insert a specification for the putDown action.
 % Same as pickup but reversed.

@@ -22,9 +22,7 @@ module robotInit {
 	if percept(sequence(Color)) then insert(sequence(Color)).
 
 	% States the index of the currently needed color in the sequence.
-	if percept(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)).
-
-	
+	if percept(sequenceIndex(Integer)) then insert(sequenceIndex(Integer)) + adopt(running).
 
 
 }

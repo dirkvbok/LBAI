@@ -5,20 +5,23 @@ exit=nogoals.
 module main {
 
 
-	%if a-goal(returnBlock(Block)), bel(room(Room)), bel(takenFrom(Block,Room)) then goTo(Room).
 	
-	%if a-goal(returnBlock(Block)), bel(in(Room)), bel(takenFrom(Block,Room)), bel(holding(Block)) then putDown + drop(returnBlock(Block)) + delete(takenFrom(Block,Room)).
+	
+	
+	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(in(Room)) then putDown + drop(returnBlock(Block)).
+	
+	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(visited(Room)) then goTo(Room).
+	
+	
+	forall bel(block(Block,Room)), bel(color(Block,Color)), bel(in(Room)), bel(not(sentMessage(Room))) 
+		do allother.send(block(Block,Room)) + allother.send:(color(Block,Color)) + insert(sentMessage(Room)).	
+	
+	
 
+	if a-goal(currentColor(Color)), bel(not(holding(Block))), bel(block(Block,Room)), bel(color(Block,Color)), bel(in('DropZone')), bel(visited(Room)) then goTo(Room).
 	
-	
-	% When agent is in DropZone and remembers a block with current needed color somewhere in a room, it will go to that room.
-	if a-goal(currentColor(Color)), bel(not(holding(Block))), bel(in('DropZone')),bel(color(Block,Color)), bel(block(Block,Room)), bel(visited(Room)) then goTo(Room).
-	
-	% When agent 
-	%if a-goal(deliverBlock(Block)), bel(sequenceIndex(Index)), bel(color(Block,Color)), bel(block(Block,Room)), bel(in(Room)), percept(not(block(Block,Room))) then drop(currentColor(Color)) + insert(sequenceIndex(Index + 1)) + delete(sequenceIndex(Index)).
-
 	% When agent holds nothing and is near a block with the right color, it will pick the block up.
-	if a-goal(deliverBlock(Block)), bel(not(holding(_))) then pickUp(Block).
+	if a-goal(deliverBlock(Block)), bel(not(holding(_))) then pickUp(Block) + allother.send(pickedUp(Block)).
 	
 	% When agent sees a block in a room with the right color but is not near it, it will go to the block.
 	if a-goal(atBlock(Block)), bel(not(holding(_))) then goToBlock(Block).
