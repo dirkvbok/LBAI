@@ -15,7 +15,6 @@
 	returnBlock/1,
 	deliverBlock/1,
 	sentMessage/1,
-	pickedUp/1,
 	running/0.
 
 % A room is a place with exactly one neighbour, i.e., there is only one way to get to and from that place.

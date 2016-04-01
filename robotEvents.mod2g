@@ -22,8 +22,8 @@ module robotEvents {
 
 	% For all blocks that are in a room where the agent is, add the color and room of these blocks to the belief base.
 	forall percept(color(Block,Color)), bel(in(Room))
-		do insert(color(Block,Color)) + insert(block(Block,Room)).	
-	
+		do insert(color(Block,Color)) + insert(block(Block,Room)).
+
 	forall (Bot).sent:(color(Block,Color)) do insert(color(Block,Color))+print('This is a Color').
 	forall (Bot).sent:(block(Block,Room)) do insert(block(Block,Room)) + insert(visited(Room)) +drop(in(Room))+print('This is a Block').
 	forall (Bot).sent:(pickedUp(Block)), bel(block(Block,Room)) do delete(block(Block,Room)).
@@ -36,6 +36,10 @@ module robotEvents {
 	if bel(sequenceIndex(Integer)), percept(sequenceIndex(NewInteger))
 		then delete(sequenceIndex(Integer)) + insert(sequenceIndex(NewInteger)).
 
+	% If all in goals have been passed, then adopt a new in goal to go to the DropZone
+	if goal(not(in(Room))) then adopt(in('DropZone')).
+
+
 	% Drops all unvisited in(Room) goals if the sequenceIndex hits 6 ie: no more colors left
 	forall goal(in(Room)), bel(sequenceIndex(6))  do drop (in(Room)) + print('Agent terminated.').
 	forall goal(currentColor(Color)), bel(sequenceIndex(6))  do drop (currentColor(Color)) + print('Agent terminated.').
@@ -43,31 +47,36 @@ module robotEvents {
 
 	% Delete goal current color if this is no longer the current color in sequence.
 	if goal(currentColor(OldColor)), bel(nextColorInSeq(Color), Color \= OldColor) then drop(currentColor(OldColor)).
-	
+
 	% Adopt the belief for current color in the sequence.
 	if goal(not(currentColor(_))), bel(nextColorInSeq(Color)) then adopt(currentColor(Color)).
-	
-	if goal(currentColor(Color)), bel(holding(Block)), bel(color(Block,OtherColor), OtherColor \= Color) 
+
+	% If the agent is holding a particular block and the color of that block doesn't match the
+	% current needed block, then the agent wil adopt a new goal to return that block and drop it's
+	% former goal to stop the agent from delivering the wrong block
+	if goal(currentColor(Color)), bel(holding(Block)), bel(color(Block,OtherColor), OtherColor \= Color)
 		then adopt(returnBlock(Block)) + drop(deliverBlock(Block)).
-	
+
 	% If in a room with needed block, adopt goal of being at this block.
 	if bel(in(Room)), bel(block(Block,Room)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
-	
+
 	% If at the right block, adopt goal of having it delivered.
 	if goal(currentColor(Color)), bel(atBlock(Block)), bel(color(Block,Color)) then adopt(deliverBlock(Block)).
 
 	% Removes the belief of block in a room that the agent is holding
 	if bel(holding(Block)), bel(block(Block,Room)) then delete(block(Block,Room)).
 
-% If agent wants to get block in room but percepts block is not in room anymore, adopt goal of returning block.
+	% If agent wants to get block in room but percepts block is not in room anymore, adopt goal of returning block.
 	if bel(holding(Block)), bel(color(Block,Color)), goal(currentColor(NewColor), not(NewColor = Color)) then adopt(returnBlock(Block)).
-	
+
 	% Removes all atBlock goals in case there are duplicate colors.
 	forall goal(atBlock(Block)), bel(in('DropZone')) do drop(atBlock(Block)).
 
+	% If the agent revisits a room and the block that the agent needs is no longer there, the agent removes the
+	% goal to go to that block.
 	if goal(atBlock(Block)), bel(color(Block,Color)), bel(in(Room)), bel(block(Block,Room)), not(percept(color(Block,Color))) then drop(atBlock(Block)).
-	
-	
-	
-	
+
+
+
+
 }

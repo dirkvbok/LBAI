@@ -5,36 +5,40 @@ exit=nogoals.
 module main {
 
 
-	
-	
-	
-	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(in(Room)) then putDown + drop(returnBlock(Block)).
-	
-	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(visited(Room)) then goTo(Room).
-	
-	
-	forall bel(block(Block,Room)), bel(color(Block,Color)), bel(in(Room)), bel(not(sentMessage(Room))) 
-		do allother.send(block(Block,Room)) + allother.send:(color(Block,Color)) + insert(sentMessage(Room)).	
-	
-	
 
+
+	% When an agent has the goal to return a specific block and the agent is in a room then drop the block
+	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(in(Room)) then putDown + drop(returnBlock(Block)).
+
+	% If the agent has a goal to return a block then go to the room where the block was first found
+	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(visited(Room)) then goTo(Room).
+
+	% For all beliefs of the blocks in a particular room that an agent holds, the agent then sends this message
+	% to all other agents
+	forall bel(block(Block,Room)), bel(color(Block,Color)), bel(in(Room)), bel(not(sentMessage(Room)))
+		do allother.send(block(Block,Room)) + allother.send:(color(Block,Color)) + insert(sentMessage(Room)).
+
+
+	% If we have a goal of a particular color and we are in the DropZone not holding anything, then the agent
+	% can revisit a room if the agents remembers that the block he needs is in that room
 	if a-goal(currentColor(Color)), bel(not(holding(Block))), bel(block(Block,Room)), bel(color(Block,Color)), bel(in('DropZone')), bel(visited(Room)) then goTo(Room).
-	
+
 	% When agent holds nothing and is near a block with the right color, it will pick the block up.
 	if a-goal(deliverBlock(Block)), bel(not(holding(_))) then pickUp(Block) + allother.send(pickedUp(Block)).
-	
+
 	% When agent sees a block in a room with the right color but is not near it, it will go to the block.
 	if a-goal(atBlock(Block)), bel(not(holding(_))) then goToBlock(Block).
-	
+
 	% When agent is in DropZone while holding the right block, it will put the block down and drop the goal of bringing that block to the DropZone.
 	if a-goal(deliverBlock(Block)), bel(color(Block,Color)), bel(in('DropZone')) then putDown + insert(deliverBlock(Block))+ drop(currentColor(Color)).
-	
+
 	% When agent holds the right block but isn't in DropZone, it will go to DropZone.
 	if a-goal(deliverBlock(Block)), bel(not(in('DropZone'))), bel(holding(Block)) then goTo('DropZone').
-	
+
 	% Go to every room.
 	if a-goal(in(Place)), bel(room(Place), not(visited(Place)), not(in(Place))) then goTo(Place).
-	
-		
-	
+
+	% If there is a goal to be in the DropZone then go to the DropZone
+	if a-goal(in('DropZone')) then goTo('DropZone').
+
 }
