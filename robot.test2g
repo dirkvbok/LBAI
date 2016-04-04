@@ -18,11 +18,12 @@ test main with
 		never bel(in('DropZone')), bel(holding(Block)), done(goTo(Room)).
 
 		% tests for mod file
-		goal(currentColor(Color)) leadsto goTo(Room).
-		goal(currentColor(Color)) leadsto pickUp(Block).
+		goal(in(Room)) leadsto goTo(Room).
+		goal(holding(Block)) leadsto pickUp(Block).
 		goal(currentColor(Color)) leadsto goTo('DropZone').
-		goal(currentColor(Color)) leadsto putDown(Block).
+		goal(deliverBlock(Block)) leadsto putDown(Block).
 		goal(currentColor(Color)) leadsto goal(not(currentColor(Color))).
+		goal(atBlock(Block)) leadsto goTo(Block).
 
 		% Assignment 3.2: insert any additional conditions for further requirements.
 
