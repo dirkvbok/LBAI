@@ -24,7 +24,7 @@ module main {
 	if a-goal(currentColor(Color)), bel(not(holding(Block))), bel(block(Block,Room)), bel(color(Block,Color)), bel(in('DropZone')), bel(visited(Room)) then goTo(Room).
 
 	% When agent holds nothing and is near a block with the right color, it will pick the block up.
-	if a-goal(deliverBlock(Block)), bel(not(holding(_))) then pickUp(Block) + allother.send(pickedUp(Block)).
+	if a-goal(holding(Block)) then pickUp(Block) + allother.send(pickedUp(Block)).
 
 	% When agent sees a block in a room with the right color but is not near it, it will go to the block.
 	if a-goal(atBlock(Block)), bel(not(holding(_))) then goToBlock(Block).
@@ -33,8 +33,8 @@ module main {
 	if a-goal(deliverBlock(Block)), bel(color(Block,Color)), bel(in('DropZone')) then putDown + insert(deliverBlock(Block))+ drop(currentColor(Color)).
 
 	% When agent holds the right block but isn't in DropZone, it will go to DropZone.
-	if a-goal(deliverBlock(Block)), bel(not(in('DropZone'))), bel(holding(Block)) then goTo('DropZone').
-
+	if a-goal(bring(Block)), bel(not(in('DropZone'))), bel(holding(Block)) then goTo('DropZone').
+	
 	% Go to every room.
 	if a-goal(in(Place)), bel(room(Place), not(visited(Place)), not(in(Place))) then goTo(Place).
 
