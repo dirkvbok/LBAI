@@ -8,7 +8,7 @@ module main {
 
 
 	% When an agent has the goal to return a specific block and the agent is in a room then drop the block
-	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(in(Room)) then putDown + drop(returnBlock(Block)).
+	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(in(Room)) then putDown + drop(returnBlock(Block)) + delete(brought(Block)).
 
 	% If the agent has a goal to return a block then go to the room where the block was first found
 	if a-goal(returnBlock(Block)), bel(takenFrom(Block,Room)), bel(visited(Room)) then goTo(Room).
@@ -33,8 +33,8 @@ module main {
 	if a-goal(deliverBlock(Block)), bel(color(Block,Color)), bel(in('DropZone')) then putDown + insert(deliverBlock(Block))+ drop(currentColor(Color)).
 
 	% When agent holds the right block but isn't in DropZone, it will go to DropZone.
-	if a-goal(bring(Block)), bel(not(in('DropZone'))), bel(holding(Block)) then goTo('DropZone').
-	
+	if a-goal(brought(Block)), bel(not(in('DropZone'))), bel(holding(Block)) then goTo('DropZone') + insert(brought(Block)).
+
 	% Go to every room.
 	if a-goal(in(Place)), bel(room(Place), not(visited(Place)), not(in(Place))) then goTo(Place).
 

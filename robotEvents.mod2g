@@ -37,13 +37,21 @@ module robotEvents {
 		then delete(sequenceIndex(Integer)) + insert(sequenceIndex(NewInteger)).
 
 	% If all in goals have been passed, then adopt a new in goal to go to the DropZone
-	%if goal(not(in(Room))) then adopt(in('DropZone')).
-
+	if goal(not(in(Room))) then adopt(in('DropZone')).
 
 	% Drops all unvisited in(Room) goals if the sequenceIndex hits 6 ie: no more colors left
-	forall goal(in(Room)), bel(sequenceIndex(6))  do drop (in(Room)) + print('Agent terminated.').
-	forall goal(currentColor(Color)), bel(sequenceIndex(6))  do drop (currentColor(Color)) + print('Agent terminated.').
-	if bel(sequenceIndex(6)) then drop(running).
+	forall goal(in(Room)),bel(not(in('DropZone'))), bel(sequenceIndex(6))  do drop (in(Room)).
+
+	% Drops all currentColor goals if all blocks have been delivered, usefull if other agents complete the sequence
+	forall goal(currentColor(Color)), bel(sequenceIndex(6))  do drop (currentColor(Color)).
+
+	% Only if all goals have been achieved then insert the terminated belief to achieve that goal
+	if bel(sequenceIndex(6)), goal(not(in(Room)),not(currentColor(Color))) then insert(terminated).
+
+	% In the case that another agent has delivered the last block and an agent is currently delivereing
+	% a block to the DropZone then drop all duplicate color blocks, which allows the remaining agents
+	% to terminate
+	forall goal(atBlock(Block)),bel(holding(Block)), bel(terminated) do drop(atBlock(Block)).
 
 	% Delete goal current color if this is no longer the current color in sequence.
 	if goal(currentColor(OldColor)), bel(nextColorInSeq(Color), Color \= OldColor) then drop(currentColor(OldColor)).
@@ -58,14 +66,14 @@ module robotEvents {
 		then adopt(returnBlock(Block)) + drop(deliverBlock(Block)).
 
 	% If in a room with needed block, adopt goal of being at this block.
-	if bel(in(Room)), bel(block(Block,Room)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
+	if bel(in(Room)),bel(not(atBlock(Block))), bel(block(Block,Room)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(atBlock(Block)).
 
 	% If in reach of a block with the right color, adopt the goal of holding that block.
 	if bel(atBlock(Block)), bel(not(holding(Block))), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(holding(Block)).
-	
+
 	% When agent holds the right block but isn't in DropZone, it will go to DropZone.
-	if bel(not(in('DropZone'))), bel(holding(Block)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(bring(Block)).
-	
+	if bel(not(in('DropZone'))), bel(holding(Block)), bel(color(Block,Color)), goal(currentColor(Color)) then adopt(brought(Block)).
+
 	% If holding the right block, adopt goal of having it delivered.
 	if goal(currentColor(Color)), bel(holding(Block)), bel(color(Block,Color)), bel(in('DropZone')) then adopt(deliverBlock(Block)).
 
